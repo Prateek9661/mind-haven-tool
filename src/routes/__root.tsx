@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Stillpoint — Your Digital Sanctuary" },
+      { title: "Velora — Your Digital Sanctuary" },
       {
         name: "description",
         content:
           "Calm your mind with guided breathing, ambient soundscapes and a supportive AI mind coach.",
       },
-      { property: "og:title", content: "Stillpoint — Your Digital Sanctuary" },
+      { property: "og:title", content: "Velora — Your Digital Sanctuary" },
       {
         property: "og:description",
         content:
