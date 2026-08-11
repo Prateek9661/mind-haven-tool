@@ -37,12 +37,12 @@ export function WelcomeBanner() {
       </h1>
 
       <div className="glass-card mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10">
-        <p className="text-xs font-semibold uppercase tracking-[0.22em] text-muted-foreground">
+        <p className="text-[0.7rem] font-medium uppercase tracking-[0.32em] text-muted-foreground">
           Today&apos;s affirmation
         </p>
         <p
           className={cn(
-            "min-h-16 text-pretty text-lg leading-relaxed text-foreground transition-all duration-700 sm:text-xl",
+            "min-h-16 text-pretty font-display text-xl font-light italic leading-relaxed text-foreground transition-all duration-700 sm:text-2xl",
             visible ? "translate-y-0 opacity-100 blur-0" : "translate-y-2 opacity-0 blur-[2px]",
           )}
         >
