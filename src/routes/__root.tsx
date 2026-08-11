@@ -77,13 +77,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "Stillpoint — Your Digital Sanctuary" },
+      { title: "Velora — Your Digital Sanctuary" },
       {
         name: "description",
         content:
           "Calm your mind with guided breathing, ambient soundscapes and a supportive AI mind coach.",
       },
-      { property: "og:title", content: "Stillpoint — Your Digital Sanctuary" },
+      { property: "og:title", content: "Velora — Your Digital Sanctuary" },
       {
         property: "og:description",
         content:
@@ -97,7 +97,7 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
       { rel: "preconnect", href: "https://fonts.gstatic.com", crossOrigin: "anonymous" },
       {
         rel: "stylesheet",
-        href: "https://fonts.googleapis.com/css2?family=Quicksand:wght@400;500;600;700&display=swap",
+        href: "https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@300;400;500;600&family=Jost:wght@300;400;500&display=swap",
       },
       {
         rel: "stylesheet",

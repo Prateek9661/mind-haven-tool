@@ -12,13 +12,13 @@ import { MOODS, type MoodId, type TrackId } from "@/lib/sanctuary";
 export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
-      { title: "Stillpoint — Calm, Focus & Breathe" },
+      { title: "Velora — Calm, Focus & Breathe" },
       {
         name: "description",
         content:
           "A calming digital sanctuary with guided 4-7-8 breathing, ambient soundscapes, mood-based focus sessions and a warm AI mind coach.",
       },
-      { property: "og:title", content: "Stillpoint — Calm, Focus & Breathe" },
+      { property: "og:title", content: "Velora — Calm, Focus & Breathe" },
       {
         property: "og:description",
         content:
