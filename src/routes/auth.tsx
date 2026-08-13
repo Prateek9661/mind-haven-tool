@@ -50,13 +50,18 @@ function AuthPage() {
     if (!loading && user) void navigate({ to: "/profile", replace: true });
   }, [loading, user, navigate]);
 
-  const fail = (message: string) => toast.error(message);
+  const fail = (message: string) => {
+    toast.error(message);
+  };
 
   const signIn = async () => {
     setBusy(true);
     const { error } = await supabase.auth.signInWithPassword({ email: email.trim(), password });
     setBusy(false);
-    if (error) return fail(error.message);
+    if (error) {
+      fail(error.message);
+      return;
+    }
     void navigate({ to: "/profile", replace: true });
   };
 
@@ -71,7 +76,10 @@ function AuthPage() {
       },
     });
     setBusy(false);
-    if (error) return fail(error.message);
+    if (error) {
+      fail(error.message);
+      return;
+    }
     if (!data.session) {
       toast.success("Almost there — check your email to confirm your account.");
       return;
@@ -83,7 +91,10 @@ function AuthPage() {
     setBusy(true);
     const { error } = await supabase.auth.signInWithOtp({ phone: phone.trim() });
     setBusy(false);
-    if (error) return fail(error.message);
+    if (error) {
+      fail(error.message);
+      return;
+    }
     setOtpSent(true);
     toast.success("We sent you a code by SMS.");
   };
@@ -96,7 +107,10 @@ function AuthPage() {
       type: "sms",
     });
     setBusy(false);
-    if (error) return fail(error.message);
+    if (error) {
+      fail(error.message);
+      return;
+    }
     void navigate({ to: "/profile", replace: true });
   };
 
@@ -107,7 +121,8 @@ function AuthPage() {
     });
     if (result.error) {
       setBusy(false);
-      return fail("Google sign-in didn't work. Please try again.");
+      fail("Google sign-in didn't work. Please try again.");
+      return;
     }
     if (result.redirected) return;
     setBusy(false);
