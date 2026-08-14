@@ -1,6 +1,7 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
 
+import { AccountNav } from "@/components/sanctuary/account-nav";
 import { WelcomeBanner } from "@/components/sanctuary/welcome-banner";
 import { MoodSelector } from "@/components/sanctuary/mood-selector";
 import { BreathingVisualizer } from "@/components/sanctuary/breathing-visualizer";
