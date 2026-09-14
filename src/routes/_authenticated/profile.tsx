@@ -58,6 +58,13 @@ function ProfilePage() {
   const fileRef = useRef<HTMLInputElement | null>(null);
 
   const [form, setForm] = useState({ full_name: "", occupation: "", age: "", country: "" });
+  const [context, setContext] = useState<{
+    role: string | null;
+    primary_struggle: string | null;
+    goal: string | null;
+    condition_note: string;
+  }>({ role: null, primary_struggle: null, goal: null, condition_note: "" });
+  const [savingContext, setSavingContext] = useState(false);
   const [saving, setSaving] = useState(false);
   const [uploading, setUploading] = useState(false);
   const [avatarUrl, setAvatarUrl] = useState<string | null>(null);
@@ -68,7 +75,9 @@ function ProfilePage() {
     queryFn: async () => {
       const { data, error } = await supabase
         .from("profiles")
-        .select("full_name, occupation, age, country, avatar_path")
+        .select(
+          "full_name, occupation, age, country, avatar_path, role, primary_struggle, goal, condition_note, personalised_greeting",
+        )
         .eq("id", user!.id)
         .maybeSingle();
       if (error) throw error;
@@ -83,6 +92,12 @@ function ProfilePage() {
       occupation: profile.occupation ?? "",
       age: profile.age != null ? String(profile.age) : "",
       country: profile.country ?? "",
+    });
+    setContext({
+      role: profile.role ?? null,
+      primary_struggle: profile.primary_struggle ?? null,
+      goal: profile.goal ?? null,
+      condition_note: profile.condition_note ?? "",
     });
   }, [profile]);
 
@@ -125,6 +140,33 @@ function ProfilePage() {
     }
     toast.success("Your profile is saved.");
     void queryClient.invalidateQueries({ queryKey: ["profile", user!.id] });
+  };
+
+  const saveContext = async () => {
+    const note = context.condition_note.trim();
+    if (note.length > 600) {
+      toast.error("Please keep your note under 600 characters.");
+      return;
+    }
+    setSavingContext(true);
+    try {
+      await savePersonalContext({
+        data: {
+          role: (context.role as never) ?? null,
+          primary_struggle: (context.primary_struggle as never) ?? null,
+          goal: (context.goal as never) ?? null,
+          condition_note: note || null,
+        },
+      });
+      toast.success("Velora is now shaped around you.");
+      void queryClient.invalidateQueries({ queryKey: ["profile", user!.id] });
+      void queryClient.invalidateQueries({ queryKey: ["profile-context", user!.id] });
+    } catch (error) {
+      console.error(error);
+      toast.error("We couldn't save that just now. Please try again.");
+    } finally {
+      setSavingContext(false);
+    }
   };
 
   const uploadAvatar = async (file: File) => {
@@ -265,6 +307,66 @@ function ProfilePage() {
           </div>
           <Button onClick={save} disabled={saving} className="min-h-11 w-full rounded-full">
             {saving ? "Saving…" : "Save profile"}
+          </Button>
+        </section>
+
+        <section className="glass-card mt-6 space-y-7 px-6 py-8 sm:px-8">
+          <div>
+            <h2 className="font-display text-2xl font-light text-foreground">About your mind</h2>
+            <p className="mt-1 text-sm text-muted-foreground">
+              Tell Velora what your days feel like, and your sanctuary will be shaped around it.
+            </p>
+          </div>
+
+          <ChipGroup
+            label="Who you are"
+            options={ROLE_OPTIONS}
+            value={context.role}
+            onChange={(v) => setContext({ ...context, role: v })}
+          />
+          <ChipGroup
+            label="What's weighing on you most"
+            options={STRUGGLE_OPTIONS}
+            value={context.primary_struggle}
+            onChange={(v) => setContext({ ...context, primary_struggle: v })}
+          />
+          <ChipGroup
+            label="What you want from Velora"
+            options={GOAL_OPTIONS}
+            value={context.goal}
+            onChange={(v) => setContext({ ...context, goal: v })}
+          />
+
+          <div className="space-y-2">
+            <Label htmlFor="condition_note">
+              Tell us anything else about how you&apos;ve been feeling lately
+            </Label>
+            <Textarea
+              id="condition_note"
+              value={context.condition_note}
+              maxLength={600}
+              rows={4}
+              placeholder="I work long hours and struggle to switch off in the evening…"
+              onChange={(e) => setContext({ ...context, condition_note: e.target.value })}
+              className="rounded-2xl"
+            />
+            <p className="text-right text-xs text-muted-foreground">
+              {context.condition_note.length}/600
+            </p>
+          </div>
+
+          {profile?.personalised_greeting ? (
+            <p className="rounded-2xl bg-secondary/70 px-5 py-4 text-sm leading-relaxed text-foreground">
+              {profile.personalised_greeting}
+            </p>
+          ) : null}
+
+          <Button
+            onClick={saveContext}
+            disabled={savingContext}
+            className="min-h-11 w-full rounded-full"
+          >
+            {savingContext ? "Personalising…" : "Save & personalise my sanctuary"}
           </Button>
         </section>
       </div>
