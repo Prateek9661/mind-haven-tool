@@ -1,7 +1,8 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 import { AccountNav } from "@/components/sanctuary/account-nav";
+import { PersonalCard } from "@/components/sanctuary/personal-card";
 import { WelcomeBanner } from "@/components/sanctuary/welcome-banner";
 import { MoodSelector } from "@/components/sanctuary/mood-selector";
 import { BreathingVisualizer } from "@/components/sanctuary/breathing-visualizer";
@@ -44,11 +45,18 @@ function Index() {
     setPlaying(Boolean(moodTrack));
   };
 
+  const handleSuggestedMood = useCallback((next: MoodId) => {
+    setMood(next);
+    setTrack(MOODS.find((m) => m.id === next)?.track ?? null);
+    setPlaying(false);
+  }, []);
+
   return (
     <main className="sanctuary-bg min-h-screen">
       <AccountNav />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-5 py-14 sm:px-8 sm:py-20">
         <WelcomeBanner />
+        <PersonalCard onSuggestMood={handleSuggestedMood} />
         <MoodSelector active={mood} onSelect={handleMood} />
         <BreathingVisualizer />
         <SoundPlayer

@@ -8,7 +8,7 @@ import {
   withLovableAiGatewayRunIdHeader,
 } from "@/lib/ai-gateway.server";
 
-type ChatRequestBody = { messages?: unknown; mood?: unknown };
+type ChatRequestBody = { messages?: unknown; mood?: unknown; profile?: unknown };
 
 const BASE_PROMPT =
   "You are a warm, supportive, and calming mind coach. Keep answers short, empathetic, and reassuring to help the user destress. Use plain, gentle language, two to four sentences, and when helpful offer one small grounding or breathing step the user can do right now. Never give medical diagnoses; if someone is in crisis, kindly encourage them to reach out to a trusted person or local emergency services.";
@@ -29,9 +29,16 @@ export const Route = createFileRoute("/api/chat")({
         }
 
         const mood = typeof body.mood === "string" && body.mood ? body.mood : null;
-        const system = mood
-          ? `${BASE_PROMPT}\n\nThe user has said they are currently feeling: "${mood}". Gently tailor your tone and suggestions to that state.`
-          : BASE_PROMPT;
+        const profile =
+          typeof body.profile === "string" && body.profile ? body.profile.slice(0, 900) : null;
+
+        let system = BASE_PROMPT;
+        if (profile) {
+          system += `\n\nWhat you already know about this person: ${profile} Use this quietly — reference their situation naturally, never repeat it back as a list and never ask them to explain it again.`;
+        }
+        if (mood) {
+          system += `\n\nThe user has said they are currently feeling: "${mood}". Gently tailor your tone and suggestions to that state.`;
+        }
 
         const initialRunId = getLovableAiGatewayRunId(request);
         const gateway = createLovableAiGatewayProvider(key, initialRunId);

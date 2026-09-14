@@ -18,31 +18,52 @@ export type Database = {
         Row: {
           age: number | null
           avatar_path: string | null
+          condition_note: string | null
           country: string | null
           created_at: string
           full_name: string | null
+          goal: string | null
           id: string
           occupation: string | null
+          personalised_at: string | null
+          personalised_greeting: string | null
+          primary_struggle: string | null
+          role: string | null
+          suggested_mood: string | null
           updated_at: string
         }
         Insert: {
           age?: number | null
           avatar_path?: string | null
+          condition_note?: string | null
           country?: string | null
           created_at?: string
           full_name?: string | null
+          goal?: string | null
           id: string
           occupation?: string | null
+          personalised_at?: string | null
+          personalised_greeting?: string | null
+          primary_struggle?: string | null
+          role?: string | null
+          suggested_mood?: string | null
           updated_at?: string
         }
         Update: {
           age?: number | null
           avatar_path?: string | null
+          condition_note?: string | null
           country?: string | null
           created_at?: string
           full_name?: string | null
+          goal?: string | null
           id?: string
           occupation?: string | null
+          personalised_at?: string | null
+          personalised_greeting?: string | null
+          primary_struggle?: string | null
+          role?: string | null
+          suggested_mood?: string | null
           updated_at?: string
         }
         Relationships: []

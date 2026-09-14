@@ -16,6 +16,11 @@ import {
   PromptInputSubmit,
 } from "@/components/ai-elements/prompt-input";
 import { Shimmer } from "@/components/ai-elements/shimmer";
+import { useQuery } from "@tanstack/react-query";
+
+import { supabase } from "@/integrations/supabase/client";
+import { useSession } from "@/hooks/use-session";
+import { describeContext } from "@/lib/personalisation";
 import { MOODS, DEFAULT_SUGGESTIONS, type MoodId } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
 
@@ -26,11 +31,30 @@ export function CoachChat({ mood }: { mood: MoodId | null }) {
   const moodRef = useRef<string | null>(moodLabel);
   moodRef.current = moodLabel;
 
+  const { user } = useSession();
+  const { data: profile } = useQuery({
+    queryKey: ["profile-context", user?.id],
+    enabled: Boolean(user?.id),
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("profiles")
+        .select("role, primary_struggle, goal, condition_note")
+        .eq("id", user!.id)
+        .maybeSingle();
+      if (error) throw error;
+      return data;
+    },
+  });
+
+  const profileSummary = describeContext(profile ?? null);
+  const profileRef = useRef<string | null>(profileSummary);
+  profileRef.current = profileSummary;
+
   const { messages, sendMessage, status } = useChat({
     transport: new DefaultChatTransport({
       api: "/api/chat",
       prepareSendMessagesRequest: ({ messages: msgs }) => ({
-        body: { messages: msgs, mood: moodRef.current },
+        body: { messages: msgs, mood: moodRef.current, profile: profileRef.current },
       }),
     }),
     onError: (error) => {
