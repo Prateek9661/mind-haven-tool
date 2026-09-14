@@ -10,8 +10,12 @@ import { useSession } from "@/hooks/use-session";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Toaster } from "@/components/ui/sonner";
+import { savePersonalContext } from "@/lib/personalisation.functions";
+import { ROLE_OPTIONS, STRUGGLE_OPTIONS, GOAL_OPTIONS } from "@/lib/personalisation";
+import { cn } from "@/lib/utils";
 
 export const Route = createFileRoute("/_authenticated/profile")({
   ssr: false,
