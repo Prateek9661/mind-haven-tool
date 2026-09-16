@@ -374,3 +374,42 @@ function ProfilePage() {
     </main>
   );
 }
+
+function ChipGroup({
+  label,
+  options,
+  value,
+  onChange,
+}: {
+  label: string;
+  options: readonly string[];
+  value: string | null;
+  onChange: (value: string | null) => void;
+}) {
+  return (
+    <fieldset className="space-y-3">
+      <legend className="text-sm font-medium text-foreground">{label}</legend>
+      <div className="flex flex-wrap gap-2">
+        {options.map((option) => {
+          const active = value === option;
+          return (
+            <button
+              key={option}
+              type="button"
+              aria-pressed={active}
+              onClick={() => onChange(active ? null : option)}
+              className={cn(
+                "min-h-11 rounded-full border border-border/70 px-5 text-sm font-medium transition-colors",
+                active
+                  ? "bg-primary text-primary-foreground"
+                  : "bg-secondary text-foreground hover:bg-accent",
+              )}
+            >
+              {option}
+            </button>
+          );
+        })}
+      </div>
+    </fieldset>
+  );
+}
