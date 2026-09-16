@@ -48,7 +48,7 @@ const profileSchema = z.object({
     .refine((v) => v === "" || (/^\d{1,3}$/.test(v) && Number(v) >= 13 && Number(v) <= 120), {
       message: "Age must be a number between 13 and 120",
     }),
-  country: z.string().trim().max(60, "Country must be under 60 characters"),
+  
 });
 
 function ProfilePage() {
