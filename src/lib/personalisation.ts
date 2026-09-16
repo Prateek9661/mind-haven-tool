@@ -1,4 +1,4 @@
-import type { MoodId } from "@/lib/sanctuary";
+import type { MoodId, TrackId } from "@/lib/sanctuary";
 
 export const ROLE_OPTIONS = [
   "Employee",
