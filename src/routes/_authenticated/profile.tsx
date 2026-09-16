@@ -76,7 +76,7 @@ function ProfilePage() {
       const { data, error } = await supabase
         .from("profiles")
         .select(
-          "full_name, occupation, age, country, avatar_path, role, primary_struggle, goal, condition_note, personalised_greeting",
+          "full_name, occupation, age, avatar_path, role, primary_struggle, goal, condition_note, personalised_greeting",
         )
         .eq("id", user!.id)
         .maybeSingle();
@@ -91,7 +91,6 @@ function ProfilePage() {
       full_name: profile.full_name ?? "",
       occupation: profile.occupation ?? "",
       age: profile.age != null ? String(profile.age) : "",
-      country: profile.country ?? "",
     });
     setContext({
       role: profile.role ?? null,
@@ -131,7 +130,6 @@ function ProfilePage() {
       full_name: parsed.data.full_name || null,
       occupation: parsed.data.occupation || null,
       age: parsed.data.age ? Number(parsed.data.age) : null,
-      country: parsed.data.country || null,
     });
     setSaving(false);
     if (error) {
@@ -282,28 +280,16 @@ function ProfilePage() {
               className="min-h-11 rounded-2xl"
             />
           </div>
-          <div className="grid gap-5 sm:grid-cols-2">
-            <div className="space-y-2">
-              <Label htmlFor="age">Age</Label>
-              <Input
-                id="age"
-                inputMode="numeric"
-                value={form.age}
-                maxLength={3}
-                onChange={(e) => setForm({ ...form, age: e.target.value })}
-                className="min-h-11 rounded-2xl"
-              />
-            </div>
-            <div className="space-y-2">
-              <Label htmlFor="country">Country</Label>
-              <Input
-                id="country"
-                value={form.country}
-                maxLength={60}
-                onChange={(e) => setForm({ ...form, country: e.target.value })}
-                className="min-h-11 rounded-2xl"
-              />
-            </div>
+          <div className="space-y-2">
+            <Label htmlFor="age">Age</Label>
+            <Input
+              id="age"
+              inputMode="numeric"
+              value={form.age}
+              maxLength={3}
+              onChange={(e) => setForm({ ...form, age: e.target.value })}
+              className="min-h-11 rounded-2xl"
+            />
           </div>
           <Button onClick={save} disabled={saving} className="min-h-11 w-full rounded-full">
             {saving ? "Saving…" : "Save profile"}
