@@ -1,40 +1,16 @@
-import { useEffect, useRef } from "react";
 import { Link } from "@tanstack/react-router";
-import { useQuery } from "@tanstack/react-query";
 import { Sparkles } from "lucide-react";
 
-import { supabase } from "@/integrations/supabase/client";
-import { useSession } from "@/hooks/use-session";
-import { MOODS, type MoodId } from "@/lib/sanctuary";
+import { usePersonalProfile } from "@/hooks/use-personal-profile";
+import { sessionFromContext, type SectionId } from "@/lib/personalisation";
+import { Button } from "@/components/ui/button";
 
-export function PersonalCard({ onSuggestMood }: { onSuggestMood: (mood: MoodId) => void }) {
-  const { user, loading } = useSession();
-  const applied = useRef(false);
-
-  const { data } = useQuery({
-    queryKey: ["profile", user?.id],
-    enabled: Boolean(user?.id),
-    queryFn: async () => {
-      const { data: row, error } = await supabase
-        .from("profiles")
-        .select(
-          "full_name, occupation, age, country, avatar_path, role, primary_struggle, goal, condition_note, personalised_greeting, suggested_mood",
-        )
-        .eq("id", user!.id)
-        .maybeSingle();
-      if (error) throw error;
-      return row;
-    },
-  });
-
-  const suggested = data?.suggested_mood as MoodId | null | undefined;
-  const mood = MOODS.find((m) => m.id === suggested) ?? null;
-
-  useEffect(() => {
-    if (!mood || applied.current) return;
-    applied.current = true;
-    onSuggestMood(mood.id);
-  }, [mood, onSuggestMood]);
+export function PersonalCard({
+  onStartSession,
+}: {
+  onStartSession: (section: SectionId) => void;
+}) {
+  const { user, loading, profile } = usePersonalProfile();
 
   if (loading) return null;
 
@@ -51,7 +27,9 @@ export function PersonalCard({ onSuggestMood }: { onSuggestMood: (mood: MoodId) 
     );
   }
 
-  if (!data?.personalised_greeting) {
+  const session = sessionFromContext(profile);
+
+  if (!profile?.personalised_greeting && !session) {
     return (
       <section className="glass-card animate-float-up px-6 py-5 text-center sm:px-8">
         <p className="text-sm text-muted-foreground">
@@ -68,27 +46,55 @@ export function PersonalCard({ onSuggestMood }: { onSuggestMood: (mood: MoodId) 
     );
   }
 
+  const lead = session?.steps.find((step) => step.section !== "affirmation")?.section as
+    | SectionId
+    | undefined;
+
   return (
     <section
       className="glass-card animate-float-up px-6 py-7 sm:px-9"
-      aria-label="Your personalised suggestion"
+      aria-label="Your personalised session"
     >
       <div className="flex items-start gap-4">
         <span className="grid size-11 shrink-0 place-items-center rounded-2xl bg-accent text-primary">
           <Sparkles className="size-5" aria-hidden />
         </span>
-        <div className="min-w-0">
-          <p className="font-display text-xl font-light leading-relaxed text-foreground sm:text-2xl">
-            {data.personalised_greeting}
-          </p>
-          {mood ? (
-            <p className="mt-3 text-sm text-muted-foreground">
-              Suggested for you: <span className="text-primary">{mood.label}</span> — {mood.note}
+        <div className="min-w-0 flex-1">
+          {profile?.personalised_greeting ? (
+            <p className="font-display text-xl font-light leading-relaxed text-foreground sm:text-2xl">
+              {profile.personalised_greeting}
             </p>
           ) : null}
+
+          {session ? (
+            <div className="mt-5">
+              <p className="font-display text-lg font-light text-primary">{session.title}</p>
+              <p className="mt-1 text-sm text-muted-foreground">{session.intro}</p>
+              <ol className="mt-4 space-y-3">
+                {session.steps.map((step, index) => (
+                  <li key={step.label} className="flex items-start gap-3 text-sm text-foreground">
+                    <span className="grid size-6 shrink-0 place-items-center rounded-full bg-secondary text-xs font-medium text-primary">
+                      {index + 1}
+                    </span>
+                    <span className="leading-relaxed">{step.label}</span>
+                  </li>
+                ))}
+              </ol>
+              {lead ? (
+                <Button
+                  type="button"
+                  onClick={() => onStartSession(lead)}
+                  className="mt-6 min-h-11 rounded-full"
+                >
+                  Start this session
+                </Button>
+              ) : null}
+            </div>
+          ) : null}
+
           <Link
             to="/profile"
-            className="mt-4 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
+            className="mt-5 inline-block text-sm font-medium text-primary underline-offset-4 hover:underline"
           >
             Update how you&apos;re feeling
           </Link>

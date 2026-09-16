@@ -1,4 +1,4 @@
-import type { MoodId } from "@/lib/sanctuary";
+import type { MoodId, TrackId } from "@/lib/sanctuary";
 
 export const ROLE_OPTIONS = [
   "Employee",
@@ -89,4 +89,167 @@ export function describeContext(context: Partial<PersonalContext> | null | undef
   if (context?.goal) parts.push(`What they want from Velora: ${context.goal.toLowerCase()}.`);
   if (context?.condition_note) parts.push(`In their own words: "${context.condition_note}"`);
   return parts.join(" ");
+}
+
+export type SectionId = "breathing" | "sounds" | "coach";
+
+export type SessionStep = {
+  section: SectionId | "affirmation";
+  label: string;
+};
+
+export type SessionPlan = {
+  title: string;
+  intro: string;
+  steps: SessionStep[];
+  track: TrackId;
+  mood: MoodId;
+};
+
+const WORK_STRESS: SessionPlan = {
+  title: "Slow it down",
+  intro: "About five minutes to let the day stop pressing on you.",
+  steps: [
+    { section: "breathing", label: "Three rounds of 4-7-8 breathing" },
+    { section: "sounds", label: "Rain on Window, softly in the background" },
+    { section: "coach", label: "Tell your coach the one thing weighing most" },
+  ],
+  track: "rain",
+  mood: "overwhelmed",
+};
+
+const LOSING_FOCUS: SessionPlan = {
+  title: "Focus warm-up",
+  intro: "A short runway before the task you keep circling.",
+  steps: [
+    { section: "breathing", label: "Three steady breaths to settle" },
+    { section: "sounds", label: "Lofi Focus Beats for a gentle rhythm" },
+    { section: "coach", label: "Name the one task you'll start with" },
+  ],
+  track: "lofi",
+  mood: "focus",
+};
+
+const ANXIOUS: SessionPlan = {
+  title: "Grounding session",
+  intro: "Longer exhales and steady tone to bring you back to now.",
+  steps: [
+    { section: "breathing", label: "Follow the long exhale a few rounds" },
+    { section: "sounds", label: "438Hz Healing Waves holding you steady" },
+    { section: "affirmation", label: "Sit with today's affirmation at the top" },
+  ],
+  track: "healing",
+  mood: "anxious",
+};
+
+const POOR_SLEEP: SessionPlan = {
+  title: "Evening wind-down",
+  intro: "A slow close to the day so sleep has somewhere to land.",
+  steps: [
+    { section: "sounds", label: "Forest Birds & Stream, volume low" },
+    { section: "breathing", label: "Soft 4-7-8 breathing until your shoulders drop" },
+    { section: "coach", label: "Let go of one thing from today out loud" },
+  ],
+  track: "forest",
+  mood: "unwind",
+};
+
+const LOW_MOTIVATION: SessionPlan = {
+  title: "A small start",
+  intro: "Not the whole mountain — just the first honest step.",
+  steps: [
+    { section: "breathing", label: "A few awakening breaths" },
+    { section: "sounds", label: "Lofi Focus Beats to carry you along" },
+    { section: "coach", label: "Pick one tiny first step with your coach" },
+  ],
+  track: "lofi",
+  mood: "focus",
+};
+
+const BURNT_OUT: SessionPlan = {
+  title: "Permission to rest",
+  intro: "Nothing to achieve here. Just a few minutes that ask nothing of you.",
+  steps: [
+    { section: "sounds", label: "Rain on Window, no task attached" },
+    { section: "breathing", label: "Breathe along for as long as feels kind" },
+    { section: "affirmation", label: "Let today's affirmation be enough" },
+  ],
+  track: "rain",
+  mood: "unwind",
+};
+
+export const SESSION_PLANS: Record<string, SessionPlan> = {
+  "Work stress": WORK_STRESS,
+  "Losing focus": LOSING_FOCUS,
+  "Anxiety / restlessness": ANXIOUS,
+  "Poor sleep": POOR_SLEEP,
+  "Low motivation": LOW_MOTIVATION,
+  "Feeling burnt out": BURNT_OUT,
+};
+
+const GOAL_PLANS: Record<string, SessionPlan> = {
+  Motivation: LOW_MOTIVATION,
+  Calm: ANXIOUS,
+  "Focus for work": LOSING_FOCUS,
+  "Better sleep": POOR_SLEEP,
+  Confidence: ANXIOUS,
+};
+
+export function sessionFromContext(
+  context: Partial<PersonalContext> | null | undefined,
+): SessionPlan | null {
+  if (!hasPersonalContext(context)) return null;
+  const byStruggle = context?.primary_struggle
+    ? SESSION_PLANS[context.primary_struggle]
+    : undefined;
+  if (byStruggle) return byStruggle;
+  const byGoal = context?.goal ? GOAL_PLANS[context.goal] : undefined;
+  return byGoal ?? WORK_STRESS;
+}
+
+const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "coach"];
+
+export function sectionOrder(context: Partial<PersonalContext> | null | undefined): SectionId[] {
+  const plan = sessionFromContext(context);
+  if (!plan) return DEFAULT_ORDER;
+  const lead = plan.steps.find((step) => step.section !== "affirmation")?.section as
+    | SectionId
+    | undefined;
+  if (!lead) return DEFAULT_ORDER;
+  return [lead, ...DEFAULT_ORDER.filter((section) => section !== lead)];
+}
+
+export function roleTone(role: string | null | undefined) {
+  switch (role) {
+    case "Employee":
+      return {
+        moodHeading: "How are you arriving at work today?",
+        coachIntro:
+          "Hello. Work can take more than it gives some days. Set a little of it down here — what's on your mind?",
+      };
+    case "Student":
+      return {
+        moodHeading: "How are you arriving at your studies today?",
+        coachIntro:
+          "Hello. Studying asks a lot of one mind. Whatever's swirling, you can say it here — what's on your mind?",
+      };
+    case "Parent / caregiver":
+      return {
+        moodHeading: "How are you arriving today, after caring for everyone else?",
+        coachIntro:
+          "Hello. You've been holding a lot for other people. This space is only yours — what's on your mind?",
+      };
+    case "Freelancer / business owner":
+      return {
+        moodHeading: "How are you arriving today, between everything you run?",
+        coachIntro:
+          "Hello. Carrying the whole thing yourself is heavy. Put a piece of it down here — what's on your mind?",
+      };
+    default:
+      return {
+        moodHeading: "How are you arriving today?",
+        coachIntro:
+          "Hello. Whatever today has been like, you can set it down here for a moment. What's on your mind?",
+      };
+  }
 }

@@ -13,16 +13,18 @@ const ICONS = {
 export function MoodSelector({
   active,
   onSelect,
+  heading = "How are you arriving today?",
 }: {
   active: MoodId | null;
   onSelect: (mood: MoodId) => void;
+  heading?: string;
 }) {
   const activeMood = MOODS.find((mood) => mood.id === active) ?? null;
 
   return (
     <section className="animate-float-up" aria-label="Mood selector">
       <h2 className="text-center text-sm font-semibold uppercase tracking-[0.22em] text-muted-foreground">
-        How are you arriving today?
+        {heading}
       </h2>
       <div className="mt-6 grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
         {MOODS.map((mood) => {
