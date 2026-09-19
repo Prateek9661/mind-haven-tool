@@ -207,6 +207,14 @@ export function sessionFromContext(
   return byGoal ?? WORK_STRESS;
 }
 
+const ROTATION: SessionPlan[] = [ANXIOUS, BURNT_OUT, LOSING_FOCUS, POOR_SLEEP, WORK_STRESS];
+
+/** A gentler, different plan to try when the first one didn't land. */
+export function alternativeSession(current: SessionPlan | null | undefined): SessionPlan {
+  const index = ROTATION.findIndex((plan) => plan.title === current?.title);
+  return ROTATION[(index + 1) % ROTATION.length]!;
+}
+
 const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "coach"];
 
 export function sectionOrder(context: Partial<PersonalContext> | null | undefined): SectionId[] {
