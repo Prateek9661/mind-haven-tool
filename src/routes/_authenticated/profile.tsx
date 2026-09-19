@@ -21,16 +21,17 @@ export const Route = createFileRoute("/_authenticated/profile")({
   ssr: false,
   head: () => ({
     meta: [
-      { title: "Your Velora Profile — Name, Work, Age & Country" },
+      { title: "Your Velora Profile — Name, Work & How You Feel" },
       {
         name: "description",
         content:
-          "Save your name, occupation, age, country and profile photo so Velora feels like your own quiet corner.",
+          "Save your name, occupation, age and photo, and tell Velora how you've been feeling so your sanctuary is shaped around you.",
       },
       { property: "og:title", content: "Your Velora Profile" },
       {
         property: "og:description",
-        content: "Keep your name, occupation, age, country and photo in your Velora sanctuary.",
+        content:
+          "Keep your details and your wellbeing answers in Velora for a sanctuary made for you.",
       },
       { property: "og:type", content: "profile" },
       { name: "twitter:card", content: "summary_large_image" },
