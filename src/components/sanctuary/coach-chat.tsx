@@ -24,7 +24,13 @@ import { describeContext } from "@/lib/personalisation";
 import { MOODS, DEFAULT_SUGGESTIONS, type MoodId } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
 
-export function CoachChat({ mood }: { mood: MoodId | null }) {
+export function CoachChat({
+  mood,
+  intro = "Hello. Whatever today has been like, you can set it down here for a moment. What's on your mind?",
+}: {
+  mood: MoodId | null;
+  intro?: string;
+}) {
   const [input, setInput] = useState("");
   const textareaRef = useRef<HTMLTextAreaElement | null>(null);
   const moodLabel = MOODS.find((m) => m.id === mood)?.label ?? null;
@@ -95,8 +101,7 @@ export function CoachChat({ mood }: { mood: MoodId | null }) {
         <ConversationContent className="gap-5 px-5 py-6 sm:px-7">
           {messages.length === 0 ? (
             <div className="mx-auto max-w-md py-8 text-center text-base leading-relaxed text-muted-foreground">
-              Hello. Whatever today has been like, you can set it down here for a moment. What&apos;s
-              on your mind?
+              {intro}
             </div>
           ) : null}
 
