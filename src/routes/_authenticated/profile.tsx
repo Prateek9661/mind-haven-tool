@@ -57,7 +57,7 @@ function ProfilePage() {
   const queryClient = useQueryClient();
   const fileRef = useRef<HTMLInputElement | null>(null);
 
-  const [form, setForm] = useState({ full_name: "", occupation: "", age: "", country: "" });
+  const [form, setForm] = useState({ full_name: "", occupation: "", age: "" });
   const [context, setContext] = useState<{
     role: string | null;
     primary_struggle: string | null;
