@@ -61,22 +61,43 @@ function Index() {
     setPlaying(Boolean(moodTrack));
   };
 
+  const [activePlan, setActivePlan] = useState<SessionPlan | null>(null);
+  const [round, setRound] = useState(0);
+
+  const scrollTo = (section: SectionId) => {
+    window.requestAnimationFrame(() => {
+      document.getElementById(`section-${section}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
   const startSession = useCallback(
     (section: SectionId) => {
       if (session) {
         setMood(session.mood);
         setTrack(session.track);
         setPlaying(true);
+        setActivePlan(session);
+        setRound((value) => value + 1);
       }
-      window.requestAnimationFrame(() => {
-        document.getElementById(`section-${section}`)?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      });
+      scrollTo(section);
     },
     [session],
   );
+
+  const tryAlternative = useCallback((plan: SessionPlan) => {
+    setMood(plan.mood);
+    setTrack(plan.track);
+    setPlaying(true);
+    setActivePlan(plan);
+    setRound((value) => value + 1);
+    const lead = plan.steps.find((step) => step.section !== "affirmation")?.section as
+      | SectionId
+      | undefined;
+    if (lead) scrollTo(lead);
+  }, []);
 
   const sections: Record<SectionId, React.ReactNode> = {
     breathing: <BreathingVisualizer />,
