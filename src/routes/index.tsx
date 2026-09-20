@@ -135,6 +135,16 @@ function Index() {
             {sections[section]}
           </div>
         ))}
+        {activePlan ? (
+          <SessionFeedback
+            key={round}
+            session={activePlan}
+            mood={mood}
+            onTryAlternative={tryAlternative}
+            onOpenCoach={scrollTo}
+          />
+        ) : null}
+        <MoodChart />
         <footer className="pb-4 text-center text-sm text-muted-foreground">
           Breathe out. You made it to the end of the page — that&apos;s a small win.
         </footer>
