@@ -8,6 +8,8 @@ import { MoodSelector } from "@/components/sanctuary/mood-selector";
 import { BreathingVisualizer } from "@/components/sanctuary/breathing-visualizer";
 import { SoundPlayer } from "@/components/sanctuary/sound-player";
 import { CoachChat } from "@/components/sanctuary/coach-chat";
+import { SessionFeedback } from "@/components/sanctuary/session-feedback";
+import { MoodChart } from "@/components/sanctuary/mood-chart";
 import { Toaster } from "@/components/ui/sonner";
 import { usePersonalProfile } from "@/hooks/use-personal-profile";
 import {
@@ -15,6 +17,7 @@ import {
   sectionOrder,
   sessionFromContext,
   type SectionId,
+  type SessionPlan,
 } from "@/lib/personalisation";
 import { MOODS, type MoodId, type TrackId } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
