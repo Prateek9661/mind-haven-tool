@@ -8,6 +8,8 @@ import { MoodSelector } from "@/components/sanctuary/mood-selector";
 import { BreathingVisualizer } from "@/components/sanctuary/breathing-visualizer";
 import { SoundPlayer } from "@/components/sanctuary/sound-player";
 import { CoachChat } from "@/components/sanctuary/coach-chat";
+import { SessionFeedback } from "@/components/sanctuary/session-feedback";
+import { MoodChart } from "@/components/sanctuary/mood-chart";
 import { Toaster } from "@/components/ui/sonner";
 import { usePersonalProfile } from "@/hooks/use-personal-profile";
 import {
@@ -15,6 +17,7 @@ import {
   sectionOrder,
   sessionFromContext,
   type SectionId,
+  type SessionPlan,
 } from "@/lib/personalisation";
 import { MOODS, type MoodId, type TrackId } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
@@ -58,22 +61,43 @@ function Index() {
     setPlaying(Boolean(moodTrack));
   };
 
+  const [activePlan, setActivePlan] = useState<SessionPlan | null>(null);
+  const [round, setRound] = useState(0);
+
+  const scrollTo = (section: SectionId) => {
+    window.requestAnimationFrame(() => {
+      document.getElementById(`section-${section}`)?.scrollIntoView({
+        behavior: "smooth",
+        block: "start",
+      });
+    });
+  };
+
   const startSession = useCallback(
     (section: SectionId) => {
       if (session) {
         setMood(session.mood);
         setTrack(session.track);
         setPlaying(true);
+        setActivePlan(session);
+        setRound((value) => value + 1);
       }
-      window.requestAnimationFrame(() => {
-        document.getElementById(`section-${section}`)?.scrollIntoView({
-          behavior: "smooth",
-          block: "start",
-        });
-      });
+      scrollTo(section);
     },
     [session],
   );
+
+  const tryAlternative = useCallback((plan: SessionPlan) => {
+    setMood(plan.mood);
+    setTrack(plan.track);
+    setPlaying(true);
+    setActivePlan(plan);
+    setRound((value) => value + 1);
+    const lead = plan.steps.find((step) => step.section !== "affirmation")?.section as
+      | SectionId
+      | undefined;
+    if (lead) scrollTo(lead);
+  }, []);
 
   const sections: Record<SectionId, React.ReactNode> = {
     breathing: <BreathingVisualizer />,
@@ -111,6 +135,16 @@ function Index() {
             {sections[section]}
           </div>
         ))}
+        {activePlan ? (
+          <SessionFeedback
+            key={round}
+            session={activePlan}
+            mood={mood}
+            onTryAlternative={tryAlternative}
+            onOpenCoach={scrollTo}
+          />
+        ) : null}
+        <MoodChart />
         <footer className="pb-4 text-center text-sm text-muted-foreground">
           Breathe out. You made it to the end of the page — that&apos;s a small win.
         </footer>
