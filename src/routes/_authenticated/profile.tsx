@@ -158,8 +158,11 @@ function ProfilePage() {
         },
       });
       toast.success("Velora is now shaped around you.");
-      void queryClient.invalidateQueries({ queryKey: ["profile", user!.id] });
-      void queryClient.invalidateQueries({ queryKey: ["profile-context", user!.id] });
+      await Promise.all([
+        queryClient.invalidateQueries({ queryKey: ["profile", user!.id] }),
+        queryClient.invalidateQueries({ queryKey: ["profile-context", user!.id] }),
+      ]);
+      await navigate({ to: "/" });
     } catch (error) {
       console.error(error);
       toast.error("We couldn't save that just now. Please try again.");
