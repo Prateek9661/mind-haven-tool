@@ -8,6 +8,8 @@ import { MoodSelector } from "@/components/sanctuary/mood-selector";
 import { BreathingVisualizer } from "@/components/sanctuary/breathing-visualizer";
 import { SoundPlayer } from "@/components/sanctuary/sound-player";
 import { CoachChat } from "@/components/sanctuary/coach-chat";
+import { ExercisePlayer } from "@/components/sanctuary/exercise-player";
+import { exerciseForContext, type Exercise } from "@/lib/exercises";
 import { SessionFeedback } from "@/components/sanctuary/session-feedback";
 import { MoodChart } from "@/components/sanctuary/mood-chart";
 import { Toaster } from "@/components/ui/sonner";
@@ -99,8 +101,24 @@ function Index() {
     if (lead) scrollTo(lead);
   }, []);
 
+  const recommendedExercise = exerciseForContext(profile);
+
+  const completeExercise = useCallback((exercise: Exercise) => {
+    setActivePlan({
+      title: exercise.title,
+      intro: exercise.subtitle,
+      steps: [],
+      track: "healing",
+      mood: "anxious",
+    });
+    setRound((value) => value + 1);
+  }, []);
+
   const sections: Record<SectionId, React.ReactNode> = {
     breathing: <BreathingVisualizer />,
+    exercises: (
+      <ExercisePlayer recommended={recommendedExercise} onComplete={completeExercise} />
+    ),
     sounds: (
       <SoundPlayer
         activeTrack={track}

@@ -91,7 +91,7 @@ export function describeContext(context: Partial<PersonalContext> | null | undef
   return parts.join(" ");
 }
 
-export type SectionId = "breathing" | "sounds" | "coach";
+export type SectionId = "breathing" | "sounds" | "exercises" | "coach";
 
 export type SessionStep = {
   section: SectionId | "affirmation";
@@ -111,6 +111,7 @@ const WORK_STRESS: SessionPlan = {
   intro: "About five minutes to let the day stop pressing on you.",
   steps: [
     { section: "breathing", label: "Three rounds of 4-7-8 breathing" },
+    { section: "exercises", label: "Sigh it out — a minute of long exhales" },
     { section: "sounds", label: "Rain on Window, softly in the background" },
     { section: "coach", label: "Tell your coach the one thing weighing most" },
   ],
@@ -123,6 +124,7 @@ const LOSING_FOCUS: SessionPlan = {
   intro: "A short runway before the task you keep circling.",
   steps: [
     { section: "breathing", label: "Three steady breaths to settle" },
+    { section: "exercises", label: "Box breathing 4-4-4-4 to gather your attention" },
     { section: "sounds", label: "Lofi Focus Beats for a gentle rhythm" },
     { section: "coach", label: "Name the one task you'll start with" },
   ],
@@ -134,6 +136,7 @@ const ANXIOUS: SessionPlan = {
   title: "Grounding session",
   intro: "Longer exhales and steady tone to bring you back to now.",
   steps: [
+    { section: "exercises", label: "5-4-3-2-1 grounding through your senses" },
     { section: "breathing", label: "Follow the long exhale a few rounds" },
     { section: "sounds", label: "438Hz Healing Waves holding you steady" },
     { section: "affirmation", label: "Sit with today's affirmation at the top" },
@@ -147,6 +150,7 @@ const POOR_SLEEP: SessionPlan = {
   intro: "A slow close to the day so sleep has somewhere to land.",
   steps: [
     { section: "sounds", label: "Forest Birds & Stream, volume low" },
+    { section: "exercises", label: "A slow body scan from head to feet" },
     { section: "breathing", label: "Soft 4-7-8 breathing until your shoulders drop" },
     { section: "coach", label: "Let go of one thing from today out loud" },
   ],
@@ -159,6 +163,7 @@ const LOW_MOTIVATION: SessionPlan = {
   intro: "Not the whole mountain — just the first honest step.",
   steps: [
     { section: "breathing", label: "A few awakening breaths" },
+    { section: "exercises", label: "Sigh it out to shake off the heaviness" },
     { section: "sounds", label: "Lofi Focus Beats to carry you along" },
     { section: "coach", label: "Pick one tiny first step with your coach" },
   ],
@@ -171,6 +176,7 @@ const BURNT_OUT: SessionPlan = {
   intro: "Nothing to achieve here. Just a few minutes that ask nothing of you.",
   steps: [
     { section: "sounds", label: "Rain on Window, no task attached" },
+    { section: "exercises", label: "Tense and release, letting each muscle go" },
     { section: "breathing", label: "Breathe along for as long as feels kind" },
     { section: "affirmation", label: "Let today's affirmation be enough" },
   ],
@@ -215,7 +221,7 @@ export function alternativeSession(current: SessionPlan | null | undefined): Ses
   return ROTATION[(index + 1) % ROTATION.length]!;
 }
 
-const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "coach"];
+const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "exercises", "coach"];
 
 export function sectionOrder(context: Partial<PersonalContext> | null | undefined): SectionId[] {
   const plan = sessionFromContext(context);
