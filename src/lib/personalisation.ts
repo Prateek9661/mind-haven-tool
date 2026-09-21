@@ -91,7 +91,7 @@ export function describeContext(context: Partial<PersonalContext> | null | undef
   return parts.join(" ");
 }
 
-export type SectionId = "breathing" | "sounds" | "coach";
+export type SectionId = "breathing" | "sounds" | "exercises" | "coach";
 
 export type SessionStep = {
   section: SectionId | "affirmation";
@@ -215,7 +215,7 @@ export function alternativeSession(current: SessionPlan | null | undefined): Ses
   return ROTATION[(index + 1) % ROTATION.length]!;
 }
 
-const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "coach"];
+const DEFAULT_ORDER: SectionId[] = ["breathing", "sounds", "exercises", "coach"];
 
 export function sectionOrder(context: Partial<PersonalContext> | null | undefined): SectionId[] {
   const plan = sessionFromContext(context);
