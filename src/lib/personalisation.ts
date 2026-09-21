@@ -163,6 +163,7 @@ const LOW_MOTIVATION: SessionPlan = {
   intro: "Not the whole mountain — just the first honest step.",
   steps: [
     { section: "breathing", label: "A few awakening breaths" },
+    { section: "exercises", label: "Sigh it out to shake off the heaviness" },
     { section: "sounds", label: "Lofi Focus Beats to carry you along" },
     { section: "coach", label: "Pick one tiny first step with your coach" },
   ],
@@ -175,6 +176,7 @@ const BURNT_OUT: SessionPlan = {
   intro: "Nothing to achieve here. Just a few minutes that ask nothing of you.",
   steps: [
     { section: "sounds", label: "Rain on Window, no task attached" },
+    { section: "exercises", label: "Tense and release, letting each muscle go" },
     { section: "breathing", label: "Breathe along for as long as feels kind" },
     { section: "affirmation", label: "Let today's affirmation be enough" },
   ],
