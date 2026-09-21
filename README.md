@@ -1,4 +1,4 @@
-# Calm Oasis
+# Velora 
 
 Build a responsive, highly calming digital wellness and mind-relaxation web app designed for everyday individuals, workers, and students who want to destress, find focus, or unwind.
 
