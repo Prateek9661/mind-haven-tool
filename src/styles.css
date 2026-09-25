@@ -65,6 +65,8 @@
   --gold: oklch(0.812 0.0771 87.5);
   --champagne: oklch(0.9188 0.0343 88.5);
   --cream: oklch(0.9741 0.0106 84.5);
+  --water: oklch(0.72 0.048 188);
+  --water-deep: oklch(0.4 0.055 224);
 
   --background: oklch(0.9741 0.0106 84.5);
   --foreground: oklch(0.2542 0.0616 265.5);
@@ -125,6 +127,64 @@
   background-color: var(--background);
   background-image: var(--gradient-sanctuary);
   background-attachment: fixed;
+}
+
+@utility water-welcome {
+  border-radius: calc(var(--radius) + 1rem);
+  background: linear-gradient(
+    180deg,
+    color-mix(in oklab, var(--cream) 82%, var(--water)) 0%,
+    color-mix(in oklab, var(--champagne) 58%, var(--cream)) 48%,
+    color-mix(in oklab, var(--water) 18%, var(--cream)) 100%
+  );
+  box-shadow: inset 0 0 0 1px color-mix(in oklab, var(--gold) 34%, transparent),
+    var(--shadow-float);
+}
+
+.water-welcome__surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.water-welcome__reflection {
+  position: absolute;
+  inset: -20% 12% 35%;
+  background: linear-gradient(
+    105deg,
+    transparent 28%,
+    color-mix(in oklab, var(--cream) 72%, transparent) 48%,
+    transparent 68%
+  );
+  filter: blur(18px);
+  animation: water-reflection 14s ease-in-out infinite alternate;
+}
+
+.water-welcome__ripple {
+  position: absolute;
+  left: 50%;
+  bottom: -30%;
+  width: 112%;
+  aspect-ratio: 2 / 1;
+  border: 1px solid color-mix(in oklab, var(--water-deep) 24%, transparent);
+  border-radius: 50%;
+  transform: translateX(-50%) scale(0.72);
+  box-shadow: 0 -12px 34px color-mix(in oklab, var(--cream) 62%, transparent),
+    inset 0 12px 32px color-mix(in oklab, var(--water) 16%, transparent);
+  animation: water-ripple 10s ease-in-out infinite;
+}
+
+.water-welcome__ripple--two {
+  bottom: -21%;
+  width: 88%;
+  animation-delay: -3.3s;
+}
+
+.water-welcome__ripple--three {
+  bottom: -13%;
+  width: 64%;
+  animation-delay: -6.6s;
 }
 
 @layer base {
@@ -189,5 +249,35 @@
   }
   50% {
     opacity: 1;
+  }
+}
+
+@keyframes water-ripple {
+  0%,
+  100% {
+    opacity: 0.28;
+    transform: translateX(-50%) scale(0.72);
+  }
+  50% {
+    opacity: 0.62;
+    transform: translateX(-50%) scale(1.04);
+  }
+}
+
+@keyframes water-reflection {
+  from {
+    opacity: 0.3;
+    transform: translateX(-8%) skewX(-6deg);
+  }
+  to {
+    opacity: 0.68;
+    transform: translateX(8%) skewX(4deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .water-welcome__ripple,
+  .water-welcome__reflection {
+    animation: none;
   }
 }
