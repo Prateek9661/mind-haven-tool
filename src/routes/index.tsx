@@ -136,7 +136,7 @@ function Index() {
     <main className="sanctuary-bg min-h-screen">
       <AccountNav />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-5 py-14 sm:px-8 sm:py-20">
-        <WelcomeBanner />
+        <WelcomeBanner relaxing={profile?.goal === "Calm"} />
         <PersonalCard onStartSession={startSession} />
         <MoodSelector active={mood} onSelect={handleMood} heading={tone.moodHeading} />
         {order.map((section, index) => (
