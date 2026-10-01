@@ -133,7 +133,7 @@ function Index() {
   };
 
   return (
-    <main className="sanctuary-bg min-h-screen">
+    <main className={cn("sanctuary-bg min-h-screen", profile?.goal === "Calm" && "calm-mode")}>
       <AccountNav />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-5 py-14 sm:px-8 sm:py-20">
         <WelcomeBanner relaxing={profile?.goal === "Calm"} />
