@@ -8,3 +8,5 @@
 > Commits you push to the connected branch sync back to Lovable and show up in
 > the editor, so keep the branch in a working state.
 <!-- LOVABLE:END -->
+
+- Scope the sanctuary's Calm theme to the home page when the saved profile goal is `Calm`; this preserves other users' original appearance and avoids changing account pages.

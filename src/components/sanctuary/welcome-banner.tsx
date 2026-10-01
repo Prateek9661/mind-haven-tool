@@ -1,6 +1,8 @@
 import { useEffect, useState } from "react";
 import { Leaf, RefreshCw } from "lucide-react";
 
+import calmWater from "@/assets/calm-water.jpg";
+import { Button } from "@/components/ui/button";
 import { AFFIRMATIONS } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
 
@@ -29,11 +31,13 @@ export function WelcomeBanner({ relaxing = false }: { relaxing?: boolean }) {
     <header
       className={cn(
         "animate-float-up text-center",
-        relaxing && "water-welcome relative isolate overflow-hidden px-4 py-12 sm:px-8 sm:py-16",
+        relaxing && "water-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
       )}
     >
       {relaxing ? (
         <div className="water-welcome__surface" aria-hidden>
+          <img src={calmWater} alt="" width={1536} height={1024} className="water-welcome__image" />
+          <span className="water-welcome__veil" />
           <span className="water-welcome__ripple water-welcome__ripple--one" />
           <span className="water-welcome__ripple water-welcome__ripple--two" />
           <span className="water-welcome__ripple water-welcome__ripple--three" />
@@ -51,7 +55,7 @@ export function WelcomeBanner({ relaxing = false }: { relaxing?: boolean }) {
           <span className="mt-1 block italic text-[color:var(--gold)]">Take a deep breath.</span>
         </h1>
 
-        <div className="glass-card mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10">
+        <div className={cn("mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10", relaxing ? "water-welcome__affirmation" : "glass-card")}>
           <p className="text-[0.7rem] font-medium uppercase tracking-[0.32em] text-muted-foreground">
             Today&apos;s affirmation
           </p>
@@ -63,14 +67,15 @@ export function WelcomeBanner({ relaxing = false }: { relaxing?: boolean }) {
           >
             “{AFFIRMATIONS[index]}”
           </p>
-          <button
+          <Button
             type="button"
+            variant="secondary"
             onClick={refresh}
-            className="inline-flex min-h-11 items-center gap-2 rounded-full bg-secondary px-5 text-sm font-medium text-primary transition-colors hover:bg-accent"
+            className="inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-sm font-medium"
           >
             <RefreshCw className="size-4" aria-hidden />
             Another gentle thought
-          </button>
+          </Button>
         </div>
       </div>
     </header>
