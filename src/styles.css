@@ -188,6 +188,10 @@
   backdrop-filter: blur(5px);
 }
 
+.calm-mode .water-welcome h1 span {
+  color: var(--primary);
+}
+
 .water-welcome__surface {
   position: absolute;
   inset: 0;
