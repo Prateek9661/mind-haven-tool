@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 
 import { AccountNav } from "@/components/sanctuary/account-nav";
 import { PersonalCard } from "@/components/sanctuary/personal-card";
@@ -51,12 +51,24 @@ function Index() {
   const [mood, setMood] = useState<MoodId | null>(null);
   const [track, setTrack] = useState<TrackId | null>(null);
   const [playing, setPlaying] = useState(false);
+  const [waterPlaying, setWaterPlaying] = useState(false);
+  const relaxing = profile?.goal === "Calm";
+
+  useEffect(() => {
+    if (!relaxing) setWaterPlaying(false);
+  }, [relaxing]);
+
+  const changeWater = (next: boolean) => {
+    if (next) setPlaying(false);
+    setWaterPlaying(next);
+  };
 
   const session = sessionFromContext(profile);
   const order = sectionOrder(profile);
   const tone = roleTone(profile?.role);
 
   const handleMood = (next: MoodId) => {
+    setWaterPlaying(false);
     setMood(next);
     const moodTrack = MOODS.find((m) => m.id === next)?.track ?? null;
     setTrack(moodTrack);
@@ -78,6 +90,7 @@ function Index() {
   const startSession = useCallback(
     (section: SectionId) => {
       if (session) {
+        setWaterPlaying(false);
         setMood(session.mood);
         setTrack(session.track);
         setPlaying(true);
@@ -90,6 +103,7 @@ function Index() {
   );
 
   const tryAlternative = useCallback((plan: SessionPlan) => {
+    setWaterPlaying(false);
     setMood(plan.mood);
     setTrack(plan.track);
     setPlaying(true);
@@ -124,6 +138,7 @@ function Index() {
         activeTrack={track}
         playing={playing}
         onChange={(nextTrack, nextPlaying) => {
+          if (nextPlaying) setWaterPlaying(false);
           setTrack(nextTrack);
           setPlaying(nextPlaying);
         }}
@@ -133,10 +148,10 @@ function Index() {
   };
 
   return (
-    <main className={cn("sanctuary-bg min-h-screen", profile?.goal === "Calm" && "calm-mode")}>
+    <main className={cn("sanctuary-bg min-h-screen", relaxing && "calm-mode")}>
       <AccountNav />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-5 py-14 sm:px-8 sm:py-20">
-        <WelcomeBanner relaxing={profile?.goal === "Calm"} />
+        <WelcomeBanner relaxing={relaxing} waterPlaying={waterPlaying} onWaterChange={changeWater} />
         <PersonalCard onStartSession={startSession} />
         <MoodSelector active={mood} onSelect={handleMood} heading={tone.moodHeading} />
         {order.map((section, index) => (

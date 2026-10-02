@@ -10,3 +10,4 @@
 <!-- LOVABLE:END -->
 
 - Scope the sanctuary's Calm theme to the home page when the saved profile goal is `Calm`; this preserves other users' original appearance and avoids changing account pages.
+- Keep Calm video and water ambience as local CDN assets; browser autoplay restrictions require explicit user action before audio, while video may autoplay muted.

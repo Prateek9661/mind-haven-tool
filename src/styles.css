@@ -172,7 +172,25 @@
   height: 100%;
   object-fit: cover;
   object-position: center;
-  animation: water-image-drift 30s ease-in-out infinite alternate;
+}
+
+.water-welcome__video {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+}
+
+.water-welcome__controls {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 0.75rem 1.25rem;
+  margin-top: 1.5rem;
+  color: var(--foreground);
 }
 
 .water-welcome__veil {
@@ -326,15 +344,9 @@
   }
 }
 
-@keyframes water-image-drift {
-  from { transform: scale(1); }
-  to { transform: scale(1.045); }
-}
-
 @media (prefers-reduced-motion: reduce) {
   .water-welcome__ripple,
-  .water-welcome__reflection,
-  .water-welcome__image {
+  .water-welcome__reflection {
     animation: none;
   }
 }
