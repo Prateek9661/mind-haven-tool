@@ -3,6 +3,7 @@ import { Leaf, Pause, Play, RefreshCw, Volume2, Waves } from "lucide-react";
 
 import calmWater from "@/assets/calm-water.jpg";
 import calmWaterVideo from "@/assets/calm-water.mp4.asset.json";
+import calmWaterWebm from "@/assets/calm-water.webm.asset.json";
 import waterAudio from "@/assets/calm-water-ambience.mp3.asset.json";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -56,7 +57,9 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
     const video = videoRef.current;
     if (!video) return;
     if (relaxing && !reducedMotion && !motionPaused && inView && pageVisible && !videoError) {
-      void video.play().catch(() => setVideoError(true));
+      void video.play().catch(() => {
+        // A tab visibility change or a pause can interrupt play() without a media failure.
+      });
     } else video.pause();
   }, [relaxing, reducedMotion, motionPaused, inView, pageVisible, videoError]);
 
@@ -138,6 +141,7 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
           <img src={calmWater} alt="" width={1536} height={1024} className="water-welcome__image" />
           {!reducedMotion && !videoError ? (
             <video ref={videoRef} className="water-welcome__video" muted loop playsInline autoPlay preload="metadata" poster={calmWater} aria-hidden="true" onError={() => setVideoError(true)}>
+              <source src={calmWaterWebm.url} type="video/webm" />
               <source src={calmWaterVideo.url} type="video/mp4" />
             </video>
           ) : null}

@@ -1,9 +1,11 @@
 {
   "version": 1,
-  "asset_id": "072d5192-6aae-4dbe-a0a6-57a73c600ee2",
+  "asset_id": "2e6e263b-6c8e-42e5-ad53-0b4be9d39e53",
   "project_id": "9c25de6e-7794-423e-b2c3-5fa90d9a88cb",
-  "url": "/__l5e/assets-v1/072d5192-6aae-4dbe-a0a6-57a73c600ee2/calm-water-ambience.mp3",
+  "url": "/__l5e/assets-v1/2e6e263b-6c8e-42e5-ad53-0b4be9d39e53/calm-water-ambience.mp3",
+  "r2_key": "a/v1/9c25de6e-7794-423e-b2c3-5fa90d9a88cb/2e6e263b-6c8e-42e5-ad53-0b4be9d39e53/calm-water-ambience.mp3",
   "original_filename": "calm-water-ambience.mp3",
   "size": 314259,
-  "created_at": "2026-10-02T04:11:56Z"
+  "content_type": "audio/mpeg",
+  "created_at": "2026-10-04T12:31:57Z"
 }
