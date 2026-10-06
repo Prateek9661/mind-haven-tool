@@ -27,9 +27,11 @@ function clock(seconds: number) {
 export function ExercisePlayer({
   recommended,
   onComplete,
+  onBegin,
 }: {
   recommended?: Exercise | null;
   onComplete?: (exercise: Exercise) => void;
+  onBegin?: () => void;
 }) {
   const [active, setActive] = useState<Exercise | null>(null);
   const [elapsed, setElapsed] = useState(0);
@@ -76,6 +78,7 @@ export function ExercisePlayer({
   }, [active, elapsed, total, finished, onComplete]);
 
   const start = (exercise: Exercise) => {
+    onBegin?.();
     lastStep.current = -1;
     setActive(exercise);
     setElapsed(0);
