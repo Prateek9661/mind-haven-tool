@@ -1,5 +1,5 @@
 import { createFileRoute } from "@tanstack/react-router";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 import { AccountNav } from "@/components/sanctuary/account-nav";
 import { PersonalCard } from "@/components/sanctuary/personal-card";
@@ -13,6 +13,9 @@ import { exerciseForContext, type Exercise } from "@/lib/exercises";
 import { SessionFeedback } from "@/components/sanctuary/session-feedback";
 import { MoodChart } from "@/components/sanctuary/mood-chart";
 import { Toaster } from "@/components/ui/sonner";
+import { toast } from "sonner";
+import { FocusBadge, FocusConsent, FocusGuide } from "@/components/sanctuary/focus-mode";
+import { useFocusMode } from "@/hooks/use-focus-mode";
 import { usePersonalProfile } from "@/hooks/use-personal-profile";
 import {
   roleTone,
@@ -58,7 +61,26 @@ function Index() {
     if (!relaxing) setWaterPlaying(false);
   }, [relaxing]);
 
+  const focus = useFocusMode();
+  const [consentOpen, setConsentOpen] = useState(false);
+  const [guideOpen, setGuideOpen] = useState(false);
+
+  const offerFocus = () => {
+    if (!relaxing || focus.active) return;
+    if (focus.pref === "always") {
+      void focus.start();
+      setGuideOpen(true);
+    } else if (focus.pref === "ask") setConsentOpen(true);
+  };
+
+  const endFocus = () => {
+    if (!focus.active) return;
+    void focus.stop();
+    toast("Focus mode ended", { description: "You can turn Do Not Disturb off now." });
+  };
+
   const changeWater = (next: boolean) => {
+    if (next) offerFocus();
     if (next) setPlaying(false);
     setWaterPlaying(next);
   };
@@ -89,6 +111,7 @@ function Index() {
 
   const startSession = useCallback(
     (section: SectionId) => {
+      offerFocus();
       if (session) {
         setWaterPlaying(false);
         setMood(session.mood);
@@ -99,7 +122,8 @@ function Index() {
       }
       scrollTo(section);
     },
-    [session],
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [session, relaxing, focus.active, focus.pref],
   );
 
   const tryAlternative = useCallback((plan: SessionPlan) => {
@@ -115,9 +139,12 @@ function Index() {
     if (lead) scrollTo(lead);
   }, []);
 
+  const endFocusRef = useRef(endFocus);
+  endFocusRef.current = endFocus;
   const recommendedExercise = exerciseForContext(profile);
 
   const completeExercise = useCallback((exercise: Exercise) => {
+    endFocusRef.current();
     setActivePlan({
       title: exercise.title,
       intro: exercise.subtitle,
@@ -131,7 +158,7 @@ function Index() {
   const sections: Record<SectionId, React.ReactNode> = {
     breathing: <BreathingVisualizer />,
     exercises: (
-      <ExercisePlayer recommended={recommendedExercise} onComplete={completeExercise} />
+      <ExercisePlayer recommended={recommendedExercise} onComplete={completeExercise} onBegin={offerFocus} />
     ),
     sounds: (
       <SoundPlayer
@@ -182,7 +209,22 @@ function Index() {
           Breathe out. You made it to the end of the page — that&apos;s a small win.
         </footer>
       </div>
-      <Toaster />
+      {focus.active ? null : <Toaster />}
+      <FocusConsent
+        open={consentOpen}
+        onAccept={(remember) => {
+          if (remember) focus.setPref("always");
+          setConsentOpen(false);
+          void focus.start();
+          setGuideOpen(true);
+        }}
+        onDecline={(remember) => {
+          if (remember) focus.setPref("never");
+          setConsentOpen(false);
+        }}
+      />
+      <FocusGuide open={guideOpen} onDone={() => setGuideOpen(false)} />
+      {focus.active ? <FocusBadge onEnd={endFocus} /> : null}
     </main>
   );
 }
