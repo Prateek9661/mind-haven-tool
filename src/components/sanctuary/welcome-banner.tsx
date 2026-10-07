@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState } from "react";
-import { Leaf, Pause, Play, RefreshCw, Volume2, Waves } from "lucide-react";
+import { Leaf, Pause, Play, RefreshCw, Sparkles, Volume2, Waves } from "lucide-react";
 
 import calmWater from "@/assets/calm-water.jpg";
 import calmWaterVideo from "@/assets/calm-water.mp4.asset.json";
@@ -10,8 +10,18 @@ import { Slider } from "@/components/ui/slider";
 import { AFFIRMATIONS } from "@/lib/sanctuary";
 import { cn } from "@/lib/utils";
 
-export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterChange }: {
+const MOTIVATION_AFFIRMATIONS = [
+  "One meaningful step is enough to begin.",
+  "I can create momentum without rushing myself.",
+  "My energy grows when I choose the next clear step.",
+  "I trust myself to begin before everything feels perfect.",
+  "Small, steady action is how I move forward.",
+  "I am capable of meeting this moment with purpose.",
+] as const;
+
+export function WelcomeBanner({ relaxing = false, motivating = false, waterPlaying = false, onWaterChange }: {
   relaxing?: boolean;
+  motivating?: boolean;
   waterPlaying?: boolean;
   onWaterChange?: (playing: boolean) => void;
 }) {
@@ -116,9 +126,10 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
   }, []);
 
   const refresh = () => {
+    const affirmations = motivating ? MOTIVATION_AFFIRMATIONS : AFFIRMATIONS;
     setVisible(false);
     window.setTimeout(() => {
-      setIndex((i) => (i + 1 + Math.floor(Math.random() * (AFFIRMATIONS.length - 1))) % AFFIRMATIONS.length);
+      setIndex((i) => (i + 1 + Math.floor(Math.random() * (affirmations.length - 1))) % affirmations.length);
       setVisible(true);
     }, 400);
   };
@@ -134,6 +145,7 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
       className={cn(
         "animate-float-up text-center",
         relaxing && "water-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
+        motivating && "motivation-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
       )}
     >
       {relaxing ? (
@@ -153,19 +165,31 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
         </div>
       ) : null}
 
-      <div className={cn(relaxing && "relative z-10")}>
+      {motivating ? (
+        <div className="motivation-welcome__surface" aria-hidden>
+          <span className="motivation-welcome__sun" />
+          <span className="motivation-welcome__beam motivation-welcome__beam--one" />
+          <span className="motivation-welcome__beam motivation-welcome__beam--two" />
+          <span className="motivation-welcome__beam motivation-welcome__beam--three" />
+          <span className="motivation-welcome__horizon" />
+        </div>
+      ) : null}
+
+      <div className={cn((relaxing || motivating) && "relative z-10")}>
         <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary/60 px-5 py-2 text-primary">
-          <Leaf className="size-3.5 text-accent-foreground" aria-hidden />
+          {motivating ? <Sparkles className="size-3.5 text-accent-foreground" aria-hidden /> : <Leaf className="size-3.5 text-accent-foreground" aria-hidden />}
           <span className="font-display text-lg font-light uppercase tracking-[0.42em]">Velora</span>
         </span>
         <h1 className="mx-auto mt-7 max-w-3xl text-balance font-display text-4xl font-light leading-tight text-foreground sm:text-5xl md:text-6xl">
-          Welcome to your digital sanctuary.
-          <span className="mt-1 block italic text-[color:var(--gold)]">Take a deep breath.</span>
+          {motivating ? "Welcome to your next beginning." : "Welcome to your digital sanctuary."}
+          <span className="mt-1 block italic text-[color:var(--gold)]">
+            {motivating ? "One meaningful step at a time." : "Take a deep breath."}
+          </span>
         </h1>
 
-        <div className={cn("mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10", relaxing ? "water-welcome__affirmation" : "glass-card")}>
+        <div className={cn("mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10", relaxing ? "water-welcome__affirmation" : motivating ? "motivation-welcome__affirmation" : "glass-card")}>
           <p className="text-[0.7rem] font-medium uppercase tracking-[0.32em] text-muted-foreground">
-            Today&apos;s affirmation
+            {motivating ? "Today's momentum" : "Today's affirmation"}
           </p>
           <p
             className={cn(
@@ -173,7 +197,7 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
               visible ? "translate-y-0 opacity-100 blur-0" : "translate-y-2 opacity-0 blur-[2px]",
             )}
           >
-            “{AFFIRMATIONS[index]}”
+            “{motivating ? MOTIVATION_AFFIRMATIONS[index % MOTIVATION_AFFIRMATIONS.length] : AFFIRMATIONS[index % AFFIRMATIONS.length]}”
           </p>
           <Button
             type="button"
@@ -182,7 +206,7 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
             className="inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-sm font-medium"
           >
             <RefreshCw className="size-4" aria-hidden />
-            Another gentle thought
+            {motivating ? "Another spark of drive" : "Another gentle thought"}
           </Button>
         </div>
         {relaxing ? (
@@ -204,6 +228,21 @@ export function WelcomeBanner({ relaxing = false, waterPlaying = false, onWaterC
                 {motionPaused ? <Waves className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
               </Button>
             ) : null}
+          </div>
+        ) : null}
+        {motivating && !reducedMotion ? (
+          <div className="mt-5 flex justify-center">
+            <Button
+              type="button"
+              variant="ghost"
+              size="icon"
+              className="size-11 rounded-full"
+              onClick={() => setMotionPaused((value) => !value)}
+              aria-label={motionPaused ? "Play motivational motion" : "Pause motivational motion"}
+              title={motionPaused ? "Play motivational motion" : "Pause motivational motion"}
+            >
+              {motionPaused ? <Sparkles className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
+            </Button>
           </div>
         ) : null}
         {relaxing && audioError ? <p className="mt-2 text-sm text-primary">Water sound is unavailable right now. Please try again.</p> : null}
