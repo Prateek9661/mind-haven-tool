@@ -56,6 +56,7 @@ function Index() {
   const [playing, setPlaying] = useState(false);
   const [waterPlaying, setWaterPlaying] = useState(false);
   const relaxing = profile?.goal === "Calm";
+  const motivating = profile?.goal === "Motivation";
 
   useEffect(() => {
     if (!relaxing) setWaterPlaying(false);
@@ -175,10 +176,21 @@ function Index() {
   };
 
   return (
-    <main className={cn("sanctuary-bg min-h-screen", relaxing && "calm-mode")}>
+    <main
+      className={cn(
+        "sanctuary-bg min-h-screen",
+        relaxing && "calm-mode",
+        motivating && "motivation-mode",
+      )}
+    >
       <AccountNav />
       <div className="mx-auto flex w-full max-w-5xl flex-col gap-16 px-5 py-14 sm:px-8 sm:py-20">
-        <WelcomeBanner relaxing={relaxing} waterPlaying={waterPlaying} onWaterChange={changeWater} />
+        <WelcomeBanner
+          relaxing={relaxing}
+          motivating={motivating}
+          waterPlaying={waterPlaying}
+          onWaterChange={changeWater}
+        />
         <PersonalCard onStartSession={startSession} />
         <MoodSelector active={mood} onSelect={handleMood} heading={tone.moodHeading} />
         {order.map((section, index) => (
