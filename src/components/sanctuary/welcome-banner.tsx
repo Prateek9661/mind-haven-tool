@@ -4,6 +4,7 @@ import { Leaf, Pause, Play, RefreshCw, Sparkles, Volume2, Waves } from "lucide-r
 import calmWater from "@/assets/calm-water.jpg";
 import calmWaterVideo from "@/assets/calm-water.mp4.asset.json";
 import calmWaterWebm from "@/assets/calm-water.webm.asset.json";
+import motivationMountain from "@/assets/motivation-mountain.jpg";
 import waterAudio from "@/assets/calm-water-ambience.mp3.asset.json";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -17,7 +18,13 @@ const MOTIVATION_AFFIRMATIONS = [
   "I trust myself to begin before everything feels perfect.",
   "Small, steady action is how I move forward.",
   "I am capable of meeting this moment with purpose.",
+  "Low energy does not erase my ability to take one small step.",
+  "I do not need the whole path—only the courage to begin.",
+  "Today can start again from this very moment.",
+  "Progress can be quiet and still carry me forward.",
 ] as const;
+
+const MOMENTUM_STEPS = ["Begin", "Move", "Become"] as const;
 
 export function WelcomeBanner({ relaxing = false, motivating = false, waterPlaying = false, onWaterChange }: {
   relaxing?: boolean;
@@ -167,6 +174,14 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
 
       {motivating ? (
         <div className="motivation-welcome__surface" aria-hidden>
+          <img
+            src={motivationMountain}
+            alt=""
+            width={1536}
+            height={1024}
+            className="motivation-welcome__image"
+          />
+          <span className="motivation-welcome__veil" />
           <span className="motivation-welcome__sun" />
           <span className="motivation-welcome__beam motivation-welcome__beam--one" />
           <span className="motivation-welcome__beam motivation-welcome__beam--two" />
@@ -209,6 +224,16 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
             {motivating ? "Another spark of drive" : "Another gentle thought"}
           </Button>
         </div>
+        {motivating ? (
+          <div className="motivation-welcome__journey" aria-label="Your momentum: Begin, Move, Become">
+            {MOMENTUM_STEPS.map((step, stepIndex) => (
+              <div className="motivation-welcome__milestone" key={step}>
+                <span className="motivation-welcome__marker" aria-hidden>{stepIndex + 1}</span>
+                <span>{step}</span>
+              </div>
+            ))}
+          </div>
+        ) : null}
         {relaxing ? (
           <div className="water-welcome__controls" aria-label="Water ambience controls">
             <Button type="button" variant="secondary" className="min-h-11 gap-2 rounded-full" onClick={toggleWater} disabled={audioError && waterPlaying} aria-label={waterPlaying ? "Pause water sound" : "Play water sound"}>
