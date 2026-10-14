@@ -168,6 +168,77 @@
 }
 
 /* Motivation is a saved preference, not a global theme: only the sanctuary opts in. */
+.focus-mode {
+  --background: oklch(0.966 0.012 190);
+  --foreground: oklch(0.265 0.035 245);
+  --card: oklch(0.992 0.004 190 / 85%);
+  --card-foreground: var(--foreground);
+  --primary: oklch(0.37 0.065 205);
+  --primary-foreground: oklch(0.988 0.004 190);
+  --secondary: oklch(0.9 0.028 182);
+  --secondary-foreground: var(--foreground);
+  --muted: oklch(0.936 0.014 195);
+  --muted-foreground: oklch(0.43 0.03 230);
+  --accent: oklch(0.78 0.065 178);
+  --accent-foreground: var(--foreground);
+  --border: oklch(0.7 0.035 198 / 45%);
+  --input: oklch(0.7 0.035 198 / 60%);
+  --ring: oklch(0.48 0.075 198);
+  --gold: oklch(0.4 0.065 205);
+  --gradient-sanctuary: linear-gradient(180deg, oklch(0.94 0.025 192), oklch(0.985 0.003 190) 50%, oklch(0.95 0.018 180));
+  --gradient-glow: radial-gradient(circle at 50% 45%, oklch(0.98 0.009 190), oklch(0.79 0.055 181) 55%, oklch(0.38 0.06 229));
+  --shadow-float: 0 18px 45px -22px oklch(0.27 0.045 230 / 20%);
+  --shadow-lift: 0 26px 60px -26px oklch(0.27 0.045 230 / 28%);
+  --shadow-glow: 0 0 70px 12px oklch(0.7 0.065 181 / 30%);
+  color: var(--foreground);
+}
+
+.focus-mode .glass-card {
+  background: var(--card);
+}
+
+.focus-welcome {
+  margin-inline: calc(-1 * min(2rem, 5vw));
+  border-radius: var(--radius);
+  box-shadow: var(--shadow-float);
+}
+
+.focus-welcome__surface {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.focus-welcome__image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  object-position: center;
+  animation: focus-daylight 28s ease-in-out infinite alternate;
+}
+
+.focus-welcome__veil {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, color-mix(in oklab, var(--background) 64%, transparent), color-mix(in oklab, var(--background) 72%, transparent) 48%, color-mix(in oklab, var(--background) 26%, transparent));
+}
+
+.focus-welcome__affirmation {
+  border-block: 1px solid var(--border);
+  background: color-mix(in oklab, var(--background) 85%, transparent);
+}
+
+.focus-welcome__surface[data-motion-paused="true"] .focus-welcome__image {
+  animation-play-state: paused;
+}
+
+@keyframes focus-daylight {
+  from { transform: scale(1.015); filter: brightness(1); }
+  to { transform: scale(1.035); filter: brightness(1.04); }
+}
+
+/* Motivation is a saved preference, not a global theme: only the sanctuary opts in. */
 .motivation-mode {
   --background: oklch(0.965 0.02 88);
   --foreground: oklch(0.245 0.075 282);
@@ -527,6 +598,13 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+  .focus-welcome__image {
+    animation: none;
+  }
+  .focus-welcome .animate-float-up,
+  .focus-welcome p {
+    transition: none;
+  }
   .water-welcome__ripple,
   .water-welcome__reflection,
   .motivation-welcome__sun,

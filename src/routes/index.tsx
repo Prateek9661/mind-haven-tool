@@ -57,6 +57,7 @@ function Index() {
   const [waterPlaying, setWaterPlaying] = useState(false);
   const relaxing = profile?.goal === "Calm";
   const motivating = profile?.goal === "Motivation";
+  const focusing = profile?.goal === "Focus for work";
 
   useEffect(() => {
     if (!relaxing) setWaterPlaying(false);
@@ -181,6 +182,7 @@ function Index() {
         "sanctuary-bg min-h-screen",
         relaxing && "calm-mode",
         motivating && "motivation-mode",
+        focusing && "focus-mode",
       )}
     >
       <AccountNav />
@@ -188,6 +190,7 @@ function Index() {
         <WelcomeBanner
           relaxing={relaxing}
           motivating={motivating}
+          focusing={focusing}
           waterPlaying={waterPlaying}
           onWaterChange={changeWater}
         />

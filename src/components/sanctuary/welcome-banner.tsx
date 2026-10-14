@@ -1,10 +1,11 @@
-import { useEffect, useRef, useState } from "react";
-import { Leaf, Pause, Play, RefreshCw, Sparkles, Volume2, Waves } from "lucide-react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { Focus, Leaf, Pause, Play, RefreshCw, Sparkles, Volume2, Waves } from "lucide-react";
 
 import calmWater from "@/assets/calm-water.jpg";
 import calmWaterVideo from "@/assets/calm-water.mp4.asset.json";
 import calmWaterWebm from "@/assets/calm-water.webm.asset.json";
 import motivationMountain from "@/assets/motivation-mountain.jpg";
+import focusWorkspace from "@/assets/focus-workspace.jpg";
 import waterAudio from "@/assets/calm-water-ambience.mp3.asset.json";
 import { Button } from "@/components/ui/button";
 import { Slider } from "@/components/ui/slider";
@@ -26,9 +27,21 @@ const MOTIVATION_AFFIRMATIONS = [
 
 const MOMENTUM_STEPS = ["Begin", "Move", "Become"] as const;
 
-export function WelcomeBanner({ relaxing = false, motivating = false, waterPlaying = false, onWaterChange }: {
+const FOCUS_AFFIRMATIONS = [
+  "I only need to give this next small step my attention.",
+  "One task at a time is enough for this moment.",
+  "I can return to my task gently, as often as I need.",
+  "A clear beginning matters more than a perfect finish.",
+  "I can make room for steady work and restful pauses.",
+  "My attention can settle without rushing.",
+  "I do not have to solve everything at once.",
+  "I can choose one manageable thing and begin there.",
+] as const;
+
+export function WelcomeBanner({ relaxing = false, motivating = false, focusing = false, waterPlaying = false, onWaterChange }: {
   relaxing?: boolean;
   motivating?: boolean;
+  focusing?: boolean;
   waterPlaying?: boolean;
   onWaterChange?: (playing: boolean) => void;
 }) {
@@ -132,19 +145,19 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
     setIndex(Math.floor(Math.random() * AFFIRMATIONS.length));
   }, []);
 
-  const refresh = () => {
-    const affirmations = motivating ? MOTIVATION_AFFIRMATIONS : AFFIRMATIONS;
+  const affirmations = motivating ? MOTIVATION_AFFIRMATIONS : focusing ? FOCUS_AFFIRMATIONS : AFFIRMATIONS;
+  const refresh = useCallback(() => {
     setVisible(false);
     window.setTimeout(() => {
       setIndex((i) => (i + 1 + Math.floor(Math.random() * (affirmations.length - 1))) % affirmations.length);
       setVisible(true);
     }, 400);
-  };
+  }, [affirmations]);
 
   useEffect(() => {
     const timer = window.setInterval(refresh, 18000);
     return () => window.clearInterval(timer);
-  }, []);
+  }, [refresh]);
 
   return (
     <header
@@ -153,6 +166,7 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
         "animate-float-up text-center",
         relaxing && "water-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
         motivating && "motivation-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
+        focusing && "focus-welcome relative isolate flex min-h-[490px] flex-col justify-center overflow-hidden px-5 py-12 sm:min-h-[540px] sm:px-8 sm:py-16",
       )}
     >
       {relaxing ? (
@@ -190,21 +204,28 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
         </div>
       ) : null}
 
-      <div className={cn((relaxing || motivating) && "relative z-10")}>
+      {focusing ? (
+        <div className="focus-welcome__surface" aria-hidden="true" data-motion-paused={motionPaused}>
+          <img src={focusWorkspace} alt="" width={1536} height={1024} className="focus-welcome__image" />
+          <span className="focus-welcome__veil" />
+        </div>
+      ) : null}
+
+      <div className={cn((relaxing || motivating || focusing) && "relative z-10")}>
         <span className="inline-flex items-center gap-2.5 rounded-full border border-border bg-secondary/60 px-5 py-2 text-primary">
-          {motivating ? <Sparkles className="size-3.5 text-accent-foreground" aria-hidden /> : <Leaf className="size-3.5 text-accent-foreground" aria-hidden />}
+          {motivating ? <Sparkles className="size-3.5 text-accent-foreground" aria-hidden /> : focusing ? <Focus className="size-3.5 text-accent-foreground" aria-hidden /> : <Leaf className="size-3.5 text-accent-foreground" aria-hidden />}
           <span className="font-display text-lg font-light uppercase tracking-[0.42em]">Velora</span>
         </span>
         <h1 className="mx-auto mt-7 max-w-3xl text-balance font-display text-4xl font-light leading-tight text-foreground sm:text-5xl md:text-6xl">
-          {motivating ? "Welcome to your next beginning." : "Welcome to your digital sanctuary."}
+          {motivating ? "Welcome to your next beginning." : focusing ? "Welcome to your quiet workspace." : "Welcome to your digital sanctuary."}
           <span className="mt-1 block italic text-[color:var(--gold)]">
-            {motivating ? "One meaningful step at a time." : "Take a deep breath."}
+            {motivating ? "One meaningful step at a time." : focusing ? "One task. A little clarity." : "Take a deep breath."}
           </span>
         </h1>
 
-        <div className={cn("mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10", relaxing ? "water-welcome__affirmation" : motivating ? "motivation-welcome__affirmation" : "glass-card")}>
+        <div className={cn("mx-auto mt-8 flex max-w-2xl flex-col items-center gap-4 px-6 py-7 sm:px-10", relaxing ? "water-welcome__affirmation" : motivating ? "motivation-welcome__affirmation" : focusing ? "focus-welcome__affirmation" : "glass-card")}>
           <p className="text-[0.7rem] font-medium uppercase tracking-[0.32em] text-muted-foreground">
-            {motivating ? "Today's momentum" : "Today's affirmation"}
+            {motivating ? "Today's momentum" : focusing ? "Today's focus" : "Today's affirmation"}
           </p>
           <p
             className={cn(
@@ -212,7 +233,7 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
               visible ? "translate-y-0 opacity-100 blur-0" : "translate-y-2 opacity-0 blur-[2px]",
             )}
           >
-            “{motivating ? MOTIVATION_AFFIRMATIONS[index % MOTIVATION_AFFIRMATIONS.length] : AFFIRMATIONS[index % AFFIRMATIONS.length]}”
+            “{affirmations[index % affirmations.length]}”
           </p>
           <Button
             type="button"
@@ -221,7 +242,7 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
             className="inline-flex min-h-11 items-center gap-2 rounded-full px-5 text-sm font-medium"
           >
             <RefreshCw className="size-4" aria-hidden />
-            {motivating ? "Another spark of drive" : "Another gentle thought"}
+            {motivating ? "Another spark of drive" : focusing ? "Another focus thought" : "Another gentle thought"}
           </Button>
         </div>
         {motivating ? (
@@ -267,6 +288,13 @@ export function WelcomeBanner({ relaxing = false, motivating = false, waterPlayi
               title={motionPaused ? "Play motivational motion" : "Pause motivational motion"}
             >
               {motionPaused ? <Sparkles className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
+            </Button>
+          </div>
+        ) : null}
+        {focusing && !reducedMotion ? (
+          <div className="mt-5 flex justify-center">
+            <Button type="button" variant="ghost" size="icon" className="size-11 rounded-full" onClick={() => setMotionPaused((value) => !value)} aria-label={motionPaused ? "Play focus motion" : "Pause focus motion"} title={motionPaused ? "Play focus motion" : "Pause focus motion"}>
+              {motionPaused ? <Play className="size-4" aria-hidden /> : <Pause className="size-4" aria-hidden />}
             </Button>
           </div>
         ) : null}
